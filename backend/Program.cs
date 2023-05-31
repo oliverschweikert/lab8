@@ -2,7 +2,6 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using backend.Services;
 using Microsoft.OpenApi.Models;
 
@@ -83,6 +82,8 @@ builder.Services.AddAuthorization(authOptions =>
   });
 });
 
+builder.Services.AddCors();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -93,6 +94,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(corsOptions =>
+corsOptions.AllowAnyHeader()
+.AllowAnyMethod()
+.WithOrigins("http://localhost:3000",
+             "https://localhost:3001"));
 
 app.UseAuthentication();
 app.UseAuthorization();
