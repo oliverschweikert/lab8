@@ -16,6 +16,26 @@ public class AuthService : IAuthService
     _config = config;
     _db = db;
   }
+  
+   public LoginResponse Login(LoginRequest request)
+  {
+    var response = new LoginResponse();
+    var user = db.Users.Where(u => u.Email == request.Email).FirstOrDefault();
+    if (user == null)
+      return response.SetError("Email or password was incorrect");
+
+    if (user.Password != request.Password)
+      return response.SetError("Email or password was incorrect");
+
+    var token = GenerateUserToken(user);
+
+    return response.SetUserId(user.Id).SetToken(token);
+  }
+
+  public IActionResult Register(RegisterRequest request)
+  {
+    throw new NotImplementedException();
+  }
 
   public string GenerateUserToken(User user)
   {
